@@ -1,4 +1,4 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import { mkdirSync } from 'fs';
 import { dirname } from 'path';
 import type { LiveMeasurement } from './types.js';
@@ -45,7 +45,7 @@ export const initDatabase = (dbPath: string) => {
 };
 
 export const insertMeasurement = (
-  db: Database.Database,
+  db: Database,
   homeId: string,
   measurement: LiveMeasurement
 ) => {
