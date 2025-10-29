@@ -21,12 +21,6 @@ export const startCollector = async (apiKey: string, db: Database.Database) => {
     minPower: true,
     averagePower: true,
     maxPower: true,
-    voltage1: true,
-    voltage2: true,
-    voltage3: true,
-    current1: true,
-    current2: true,
-    current3: true,
     powerFactor: true,
     signalStrength: true,
   };
@@ -37,35 +31,43 @@ export const startCollector = async (apiKey: string, db: Database.Database) => {
   console.log(`Found ${homes.length} home(s)`);
 
   for (const home of homes) {
-    console.log(`Starting collector for home: ${home.appNickname} (${home.id})`);
+    if (!home.id) {
+      console.log(`Skipping home without ID: ${home.appNickname}`);
+      continue;
+    }
 
-    const feedQuery = new TibberQuery({ ...config, homeId: home.id });
+    const homeId = home.id;
+    const homeName = home.appNickname || homeId;
+
+    console.log(`Starting collector for home: ${homeName} (${homeId})`);
+
+    const feedQuery = new TibberQuery({ ...config, homeId });
     const feed = new TibberFeed(feedQuery);
 
     feed.on('data', (data: any) => {
       try {
         const validated = LiveMeasurementSchema.parse(data);
-        insertMeasurement(db, home.id, validated);
-        console.log(`[${home.appNickname}] ${validated.power}W at ${validated.timestamp}`);
+        insertMeasurement(db, homeId, validated);
+        console.log(`[${homeName}] ${validated.power}W at ${validated.timestamp}`);
       } catch (error) {
-        console.error(`Validation error for home ${home.id}:`, error);
+        console.error(`Validation error for home ${homeId}:`, error);
       }
     });
 
     feed.on('error', (error: Error) => {
-      console.error(`Feed error for home ${home.id}:`, error);
+      console.error(`Feed error for home ${homeId}:`, error);
     });
 
     feed.on('connected', () => {
-      console.log(`✓ Feed connected for home ${home.id}`);
+      console.log(`✓ Feed connected for home ${homeId}`);
     });
 
     feed.on('disconnected', () => {
-      console.log(`✗ Feed disconnected for home ${home.id}, reconnecting...`);
+      console.log(`✗ Feed disconnected for home ${homeId}, reconnecting...`);
       setTimeout(() => feed.connect(), 5000);
     });
 
-    console.log(`Connecting feed for home ${home.id}...`);
+    console.log(`Connecting feed for home ${homeId}...`);
     feed.connect();
   }
 };

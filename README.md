@@ -43,6 +43,8 @@ docker-compose up -d
 
 Data is persisted to the directory specified by `DATA_PATH` in `.env` (defaults to `./data`).
 
+The Docker image is automatically built and pushed to GitHub Container Registry on every push to `main`.
+
 ## Database Schema
 
 The `measurements` table stores all realtime data points with the following fields:

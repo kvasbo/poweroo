@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   poweroo:
-    build: .
+    image: ghcr.io/kvasbo/poweroo:main
     container_name: poweroo
     environment:
       - TIBBER_API_KEY=${TIBBER_API_KEY}
