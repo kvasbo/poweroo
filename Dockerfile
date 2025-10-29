@@ -1,6 +1,4 @@
-FROM node:22-alpine
-
-RUN apk add --no-cache python3 make g++
+FROM node:24-slim
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -13,9 +11,7 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN pnpm build
 
-RUN pnpm prune --prod && \
-    cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && \
-    npm run build-release
+RUN pnpm prune --prod
 
 VOLUME ["/data"]
 
