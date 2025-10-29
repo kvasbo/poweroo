@@ -6,14 +6,16 @@ RUN corepack enable && corepack prepare pnpm@latest --activate
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml .npmrc ./
 RUN pnpm install --frozen-lockfile
 
 COPY tsconfig.json ./
 COPY src ./src
 RUN pnpm build
 
-RUN pnpm prune --prod
+RUN pnpm prune --prod && \
+    cd node_modules/.pnpm/better-sqlite3@*/node_modules/better-sqlite3 && \
+    npm run build-release
 
 VOLUME ["/data"]
 
