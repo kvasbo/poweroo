@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  poweroo:
+    build: .
+    container_name: poweroo
+    environment:
+      - TIBBER_API_KEY=${TIBBER_API_KEY}
+      - DB_PATH=/data/tibber.db
+    volumes:
+      - ${DATA_PATH:-./data}:/data
+    restart: unless-stopped
