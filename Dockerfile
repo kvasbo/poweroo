@@ -2,16 +2,18 @@ FROM node:22-alpine
 
 RUN apk add --no-cache python3 make g++
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 WORKDIR /app
 
-COPY package*.json ./
-RUN npm ci --production
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY tsconfig.json ./
 COPY src ./src
-RUN npm run build
+RUN pnpm build
 
-RUN npm prune --production
+RUN pnpm prune --prod
 
 VOLUME ["/data"]
 
