@@ -11,8 +11,6 @@ COPY tsconfig.json ./
 COPY src ./src
 RUN pnpm build
 
-RUN pnpm prune --prod
-
 VOLUME ["/data"]
 
 ENV DB_PATH=/data/tibber.db
